@@ -17,6 +17,16 @@ interface EmailRequestBody {
   message: string;
 }
 
+interface SendGridErrorResponse {
+    body?: any;
+    statusCode?: number;
+    headers?: Record<string, string>;
+  }
+
+interface SendGridError extends Error {
+    response?: SendGridErrorResponse;
+}
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
 
@@ -69,9 +79,16 @@ export async function POST(request: Request) {
     console.error('Error sending email:', error);
 
 
-    if (error instanceof Error && 'response' in error && error.response) {
-      console.error(error.response.body);
-    }
+    if (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        typeof (error as SendGridError).response === 'object' &&
+        (error as SendGridError).response !== null
+      ) {
+        // Safely access .body using optional chaining
+        console.error((error as SendGridError).response?.body);
+      }
 
     return NextResponse.json(
       { error: 'Failed to send email.' },
