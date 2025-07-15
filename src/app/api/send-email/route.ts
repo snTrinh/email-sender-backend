@@ -4,6 +4,15 @@
 import { NextResponse } from 'next/server';
 import sgMail from '@sendgrid/mail';
 
+// Ensure process.env types are available for TypeScript
+// You might need to run `npm install --save-dev @types/node` in your backend project
+// if you still see "Cannot find name 'process'" errors.
+declare const process: {
+  env: {
+    SENDGRID_API_KEY: string;
+  };
+};
+
 // Set your SendGrid API Key from environment variables
 // This environment variable will be configured securely on Vercel.
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
@@ -19,9 +28,9 @@ export async function POST(request: Request) {
 
     // Define the email content
     const msg = {
-      to: 'snt.trinh@gmail.com', // Replace with the email address you want to receive messages at
-      from: 'snt.trinh@gmail.com', // Replace with your SendGrid verified sender email
-      subject: `Super Sus Piping Feedback from ${name}`,
+      to: 'YOUR_RECEIVING_EMAIL@example.com', // Replace with the email address you want to receive messages at
+      from: 'YOUR_VERIFIED_SENDER_EMAIL@example.com', // Replace with your SendGrid verified sender email
+      subject: `New Contact Form Submission from ${name}`,
       text: `
         Name: ${name}
         Email: ${email}
