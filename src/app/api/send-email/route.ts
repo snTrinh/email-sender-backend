@@ -13,13 +13,21 @@ declare const process: {
   };
 };
 
+// Define the expected shape of the incoming JSON request body
+interface EmailRequestBody {
+  name: string;
+  email: string;
+  message: string;
+}
+
 // Set your SendGrid API Key from environment variables
 // This environment variable will be configured securely on Vercel.
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json();
+    // Explicitly cast the result of request.json() to EmailRequestBody
+    const { name, email, message } = await request.json() as EmailRequestBody;
 
     // Basic validation
     if (!name || !email || !message) {
@@ -54,7 +62,7 @@ export async function POST(request: Request) {
 
     // Log SendGrid specific errors if available
     if (error instanceof Error && 'response' in error && error.response) {
-      console.error(error.response.body);
+      console.error(error.response);
     }
 
     // Return an error response
@@ -66,3 +74,43 @@ export async function POST(request: Request) {
 export async function GET() {
   return NextResponse.json({ message: 'This is the email API endpoint. Use POST to send emails.' });
 }
+
+// If you are still seeing "Cannot find module '@sendgrid/mail'" or "Cannot find module 'next/server'",
+// try these troubleshooting steps in your 'email-sender-backend' project:
+// 1. Delete node_modules and lock files:
+//    rm -rf node_modules pnpm-lock.yaml  # If using pnpm
+//    rm -rf node_modules package-lock.json # If using npm
+// 2. Reinstall dependencies:
+//    pnpm install # If using pnpm
+//    npm install # If using npm
+// 3. Restart your TypeScript server/IDE (e.g., close and reopen VS Code).
+// 4. Check your tsconfig.json to ensure 'node_modules' is not excluded and 'types' array is correct.
+//    It should generally look something like this for a Next.js project:
+//    {
+//      "compilerOptions": {
+//        "target": "es5",
+//        "lib": ["dom", "dom.iterable", "esnext"],
+//        "allowJs": true,
+//        "skipLibCheck": true,
+//        "strict": true,
+//        "forceConsistentCasingInFileNames": true,
+//        "noEmit": true,
+//        "esModuleInterop": true,
+//        "module": "esnext",
+//        "moduleResolution": "bundler", // Or "node" for older setups
+//        "resolveJsonModule": true,
+//        "isolatedModules": true,
+//        "jsx": "preserve",
+//        "incremental": true,
+//        "plugins": [
+//          {
+//            "name": "next"
+//          }
+//        ],
+//        "paths": {
+//          "@/*": ["./src/*"]
+//        }
+//      },
+//      "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+//      "exclude": ["node_modules"]
+//    }
