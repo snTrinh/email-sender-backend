@@ -18,7 +18,7 @@ interface EmailRequestBody {
 }
 
 interface SendGridErrorResponse {
-    body?: any;
+    body?: unknown; 
     statusCode?: number;
     headers?: Record<string, string>;
   }
