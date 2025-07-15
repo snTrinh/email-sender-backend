@@ -58,8 +58,8 @@ export async function POST(request: Request) {
 
     // Define the email content
     const msg = {
-      to: 'YOUR_RECEIVING_EMAIL@example.com', // Replace with the email address you want to receive messages at
-      from: 'YOUR_VERIFIED_SENDER_EMAIL@example.com', // Replace with your SendGrid verified sender email
+      to: 'snt.trinh@gmail.com', // Replace with the email address you want to receive messages at
+      from: 'snt.trinh@gmail.com', // Replace with your SendGrid verified sender email
       subject: `New Contact Form Submission from ${name}`,
       text: `
         Name: ${name}
